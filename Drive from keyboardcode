@@ -1,0 +1,70 @@
+import pygame
+import RPi.GPIO as GPIO
+import time
+
+# Setup GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(17, GPIO.OUT)
+GPIO.setup(27, GPIO.OUT)
+GPIO.setup(23, GPIO.OUT)
+GPIO.setup(24, GPIO.OUT)
+
+pygame.init()
+screen = pygame.display.set_mode((400, 300))
+pygame.display.set_caption("Rover Control")
+
+running = True
+clock = pygame.time.Clock()
+
+def stop():
+    GPIO.output(17, False)
+    GPIO.output(27, False)
+    GPIO.output(23, False)
+    GPIO.output(24, False)
+
+def forward():
+    GPIO.output(17, True)
+    GPIO.output(23, True)
+    GPIO.output(27, False)
+    GPIO.output(24, False)
+
+def backward():
+    GPIO.output(17, False)
+    GPIO.output(23, False)
+    GPIO.output(27, True)
+    GPIO.output(24, True)
+
+def left():
+    GPIO.output(17, True)
+    GPIO.output(23, False)
+    GPIO.output(27, False)
+    GPIO.output(24, True)
+
+def right():
+    GPIO.output(17, False)
+    GPIO.output(23, True)
+    GPIO.output(27, True)
+    GPIO.output(24, False)
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                forward()
+            elif event.key == pygame.K_DOWN:
+                backward()
+            elif event.key == pygame.K_LEFT:
+                left()
+            elif event.key == pygame.K_RIGHT:
+                right()
+        if event.type == pygame.KEYUP:
+            stop()
+    
+    screen.fill((0, 0, 0))
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()
+GPIO.cleanup()
